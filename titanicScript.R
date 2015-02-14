@@ -14,14 +14,15 @@ df.train = read.csv("train.csv",header=TRUE)
 df.test = read.csv("test.csv",header=TRUE)
 
 library(plyr)
-## Revaluing Survived factor to ease assessment of confusion matrices later
+## Revaluing the outcomes so its easier to interpret when classifying
 df.train$Survived = as.character(df.train$Survived)
 df.train$Survived <- revalue(df.train$Survived, c("1" = "Survived", "0" = "Perished"))
 df.train$Survived = as.factor(df.train$Survived)
 
 # Data Exploration --------------------------------------------------------
 
-#Preview the data - first 6 rows
+#Preview the data - head will display the first 6 rows
+#Note, you can also exmaine data using the RStudio IDE/GUI
 head(df.train)
 
 #How complete is this data?
@@ -58,7 +59,6 @@ library(ggplot2)
 ggplot(missing.data, aes(x = Feature, y = Count)) +
   geom_bar(stat = "identity") +
   geom_text(aes(title = 'Missing Data',label = sprintf("%.2f%%", Count/nrow(df.train) * 100)), vjust = -.5)
-detach(package:ggplot2)
 
 #Examine the Data we do have, what are the distributions of the columns?
 barplot(table(df.train$Survived),
@@ -216,7 +216,7 @@ df.train$Title = as.factor(df.train$Title)
 #first we make a partition of the data
 library(caret)
 ## split training data into train batch and test batch
-set.seed(17)
+set.seed(26)
 #make list of indices to choose as your partition
 training.rows <- createDataPartition(df.train$Survived, p = 0.8, list = FALSE)
 #pick those rows to be part of the new training batch
@@ -229,6 +229,7 @@ train.glm<-glm(Survived~Pclass+Sex+Age+SibSp+Parch+Fare+Title+Embarked, data=tra
 #So, statistically speaking, how good is this model?
 summary(train.glm)
 anova(train.glm,test="Chisq")
+plot(predict(train.glm,test.batch,type="response"),test.batch$Survived)
 
 #So now we have a model! We can use this for prediction on a test set of data
 #We'll actually use the caret package to 'train' this model so we can get
