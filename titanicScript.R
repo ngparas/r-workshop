@@ -8,6 +8,9 @@ df.test = read.csv("test.csv",header=TRUE)
 
 # Data Exploration --------------------------------------------------------
 
+#Preview the data - first 6 rows
+head(df.train)
+
 #How complete is this data?
 #Discuss Data-Types, Logical Operations, Loops
 
@@ -55,7 +58,6 @@ barplot(table(df.train$Sex), main="Sex (gender)", col="darkviolet")
 hist(df.train$Age, main="Age", xlab = NULL, col="brown")
 plot(density(df.train$Age, na.rm = TRUE))
 
-
 barplot(table(df.train$SibSp), main="SibSp (siblings + spouse aboard)", 
         col="darkblue")
 barplot(table(df.train$Parch), main="Parch (parents + kids aboard)", 
@@ -66,7 +68,11 @@ barplot(table(df.train$Embarked),
         names.arg = c("","Cherbourg", "Queenstown", "Southampton"),
         main="Embarked (port of embarkation)", col="sienna")
 
-
-
-
+#Colored barplot
+counts <- table(df.train$Survived, df.train$Sex)
+#Counts is a 2x2 matrix - observe the coloring in the following barplot
+barplot(counts, 
+        xlab = "Gender", 
+        ylab = "Number of People", 
+        main = "survived and deceased between male and female")
 
