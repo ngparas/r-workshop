@@ -128,6 +128,7 @@ summary(df.train$Embarked)
 #we could pick a modeling algorithm thats robust to missing data
 #we could force all missing values to the mean
 #we could impute the missing values using the other features
+  #http://www.stat.columbia.edu/~gelman/arm/missing.pdf
 
 #Lets take a look at the data again
 head(df.train)
@@ -223,6 +224,16 @@ train.batch <- df.train[training.rows, ]
 #pick the others to be part of the "test" set
 test.batch <- df.train[-training.rows, ]
 
+#Great! Now can we fit the model?! Yes you can
+train.glm<-glm(Survived~Pclass+Sex+Age+SibSp+Parch+Fare+Title+Embarked, data=train.batch,family=binomial("logit"))
+#So, statistically speaking, how good is this model?
+summary(train.glm)
+anova(train.glm,test="Chisq")
+
+#So now we have a model! We can use this for prediction on a test set of data
+#We'll actually use the caret package to 'train' this model so we can get
+#a feeling for how good it is
+
 ## Define control function to handle optional arguments for train function
 ## Models to be assessed based on largest absolute area under ROC curve
 cv.ctrl <- trainControl(method = "repeatedcv", repeats = 3,
@@ -236,11 +247,9 @@ train.glm <- train(Survived~Pclass+Sex+Age+SibSp+Parch+Fare+Title+Embarked,
                     metric = "ROC",
                     trControl = cv.ctrl)
 
-#Great! Now can we fit the model?! Yes you can
-train.glm<-glm(Survived~Pclass+Sex+Age+SibSp+Parch+Fare+Title+Embarked, data=train.batch,family=binomial("logit"))
-#So, statistically speaking, how good is this model?
-summary(train.glm)
-anova(train.glm,test="Chisq")
+#What is this ROC nonsense? Its a curve that plots true positives v false positives
+#We're not going to worry about it yet--but we will talk about how to "Tune" models
+#next week
 
 #but, lets try it on our test set anyways and see how we fare (pun intended)
 glm.pred = predict(train.glm,test.batch)
