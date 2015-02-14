@@ -16,8 +16,14 @@ df.test = read.csv("test.csv",header=TRUE)
   #R has several major data types:
     #integer   : Whole numbers like 0, 1, 2, 3...
     #numeric   : Decimal numbers, like float or double in C
-    #character : Like strings
+    #character : Text, like "Hello World"
+    #factor    : Categorical data with discrete 'levels'
+#create a new Data Frame
+  #A data frame is used for storing data tables
+  #Each column is a list/vector of data
 missing.data <- data.frame(Count = 0, Feature = names(df.train))
+
+#We want to find the 
 for (ii in 1:ncol(df.train)) {
   if (is.numeric(df.train[,ii])==TRUE) {
     missing.data$Count[ii] = sum(is.na(df.train[,ii]))
@@ -44,7 +50,12 @@ barplot(table(df.train$Pclass),
         names.arg = c("first", "second", "third"),
         main="Pclass (passenger traveling class)", col="firebrick")
 barplot(table(df.train$Sex), main="Sex (gender)", col="darkviolet")
+
+#There are multiple ways to visualize each of these things
 hist(df.train$Age, main="Age", xlab = NULL, col="brown")
+plot(density(df.train$Age, na.rm = TRUE))
+
+
 barplot(table(df.train$SibSp), main="SibSp (siblings + spouse aboard)", 
         col="darkblue")
 barplot(table(df.train$Parch), main="Parch (parents + kids aboard)", 
