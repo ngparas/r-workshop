@@ -13,6 +13,12 @@
 df.train = read.csv("train.csv",header=TRUE)
 df.test = read.csv("test.csv",header=TRUE)
 
+library(plyr)
+## Revaluing Survived factor to ease assessment of confusion matrices later
+df.train$Survived = as.character(df.train$Survived)
+df.train$Survived <- revalue(df.train$Survived, c("1" = "Survived", "0" = "Perished"))
+df.train$Survived = as.factor(df.train$Survived)
+
 # Data Exploration --------------------------------------------------------
 
 #Preview the data - first 6 rows
@@ -177,6 +183,7 @@ getAges <- function(dataFrame){
 #finally, lets get the missing ages
 df.train = getAges(df.train)
 
+
 # Intro to Simple Feature Engineering -------------------------------------
 
 #We still have 17 titles, which is far too many to be useful
@@ -206,5 +213,36 @@ df.train$Title = as.factor(df.train$Title)
 #of the two classes or not
 
 #first we make a partition of the data
+library(caret)
+## split training data into train batch and test batch
+set.seed(17)
+#make list of indices to choose as your partition
+training.rows <- createDataPartition(df.train$Survived, p = 0.8, list = FALSE)
+#pick those rows to be part of the new training batch
+train.batch <- df.train[training.rows, ]
+#pick the others to be part of the "test" set
+test.batch <- df.train[-training.rows, ]
 
+## Define control function to handle optional arguments for train function
+## Models to be assessed based on largest absolute area under ROC curve
+cv.ctrl <- trainControl(method = "repeatedcv", repeats = 3,
+                        summaryFunction = twoClassSummary,
+                        classProbs = TRUE)
+library(pROC)
 
+train.glm <- train(Survived~Pclass+Sex+Age+SibSp+Parch+Fare+Title+Embarked,
+                    data = train.batch,
+                    method = "glm",
+                    metric = "ROC",
+                    trControl = cv.ctrl)
+
+#Great! Now can we fit the model?! Yes you can
+train.glm<-glm(Survived~Pclass+Sex+Age+SibSp+Parch+Fare+Title+Embarked, data=train.batch,family=binomial("logit"))
+#So, statistically speaking, how good is this model?
+summary(train.glm)
+anova(train.glm,test="Chisq")
+
+#but, lets try it on our test set anyways and see how we fare (pun intended)
+glm.pred = predict(train.glm,test.batch)
+library(e1071)
+confusionMatrix(glm.pred, test.batch$Survived)
