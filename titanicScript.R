@@ -8,6 +8,9 @@ df.test = read.csv("test.csv",header=TRUE)
 
 # Data Exploration --------------------------------------------------------
 
+#Preview the data - first 6 rows
+head(df.train)
+
 #How complete is this data?
 #Discuss Data-Types, Logical Operations, Loops
 
@@ -55,7 +58,10 @@ barplot(table(df.train$Embarked),
         names.arg = c("","Cherbourg", "Queenstown", "Southampton"),
         main="Embarked (port of embarkation)", col="sienna")
 
-
-
-
-
+#Colored barplot
+counts <- table(df.train$Survived, df.train$Sex)
+#Counts is a 2x2 matrix - observe the coloring in the following barplot
+barplot(counts, 
+        xlab = "Gender", 
+        ylab = "Number of People", 
+        main = "survived and deceased between male and female")
