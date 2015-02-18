@@ -258,4 +258,3 @@ glm.pred = predict(train.glm,test.batch)
 library(e1071)
 confusionMatrix(glm.pred, test.batch$Survived)
 
-#add a bunch of comments
