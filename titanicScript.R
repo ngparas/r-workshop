@@ -256,3 +256,8 @@ train.glm <- train(Survived~Pclass+Sex+Age+SibSp+Parch+Fare+Title+Embarked,
 glm.pred = predict(train.glm,test.batch)
 library(e1071)
 confusionMatrix(glm.pred, test.batch$Survived)
+
+
+# poop What is this ROC nonsense? Its a curve that plots true positives v false positives
+# poop We're not going to worry about it yet--but we will talk about how to "Tune" models
+#next poop week
