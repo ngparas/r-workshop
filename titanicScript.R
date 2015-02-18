@@ -44,6 +44,7 @@ missing.data <- data.frame(Count = 0, Feature = names(df.train))
 #We want to find the number of missing entries per feature
 #So we'll loop through each column
 #Note that each data type has to be handled differently
+#MESSED UP SHOULD ACCT FOR INTS AS WELL
 for (ii in 1:ncol(df.train)) {
   if (is.numeric(df.train[,ii])==TRUE) {
     missing.data$Count[ii] = sum(is.na(df.train[,ii]))
@@ -256,3 +257,5 @@ train.glm <- train(Survived~Pclass+Sex+Age+SibSp+Parch+Fare+Title+Embarked,
 glm.pred = predict(train.glm,test.batch)
 library(e1071)
 confusionMatrix(glm.pred, test.batch$Survived)
+
+#add a bunch of comments
